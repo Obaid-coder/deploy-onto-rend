@@ -20,7 +20,8 @@ const db = mysql.createPool({
     // CRITICAL: TiDB Cloud Starter requires SSL to connect
     ssl: {
         minVersion: 'TLSv1.2',
-        rejectUnauthorized: true 
+        rejectUnauthorized: true,
+        port: process.env.DB_PORT
     },
     waitForConnections: true,
     connectionLimit: 10,
@@ -28,8 +29,23 @@ const db = mysql.createPool({
 });
 
 // Test route
+// Test route with a built-in HTML form
 app.get('/', (req, res) => {
-    res.send('Server is running! Ready for Render.');
+    res.send(`
+        <html>
+            <body style="font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh;">
+                <h2>TiDB + Render Test Form</h2>
+                <form action="/api/login" method="POST" style="display: flex; flex-direction: column; gap: 10px; width: 300px;">
+                    <input type="text" name="username" placeholder="Username" required style="padding: 10px;">
+                    <input type="password" name="password" placeholder="Password" required style="padding: 10px;">
+                    <button type="submit" style="padding: 10px; background: #007bff; color: white; border: none; cursor: pointer;">
+                        Submit to Database
+                    </button>
+                </form>
+                <p>Check your TiDB dashboard after clicking submit!</p>
+            </body>
+        </html>
+    `);
 });
 
 // Login/Insert route
